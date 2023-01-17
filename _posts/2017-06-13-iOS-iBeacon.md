@@ -1,10 +1,10 @@
 ---
 layout: post
 title:  iOS下iBeacon总结
-date:   2017-06-13 16:40:16
-description: iOS下iBeacon总结
+date:   2017-06-13 17:26:22
+description: 
 tags: iOS
-categories: iOS
+categories: programming
 ---
 
 ## 权限
