@@ -9,8 +9,7 @@ last_name: Chen
 email: chenjun835@163.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   chenjun personal site and blog
-footer_text: >
-  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
+footer_text: 
 keywords: blog # add your own keywords or leave empty
 
 lang: cn # the language of your site (for example: en, fr, cn, ru, etc.)
