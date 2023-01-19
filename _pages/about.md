@@ -16,7 +16,9 @@ social: true  # includes social icons at the bottom of the page
 ---
 
 - 👋 Hi, I’m @chenjun305
-- 👀 I’m interested in golang, java, spring, docker, kubernetes, GraphQL, Kafka, ElasticSearch, SAAS, CRM
-- 🌱 I’m currently learning GraphQL
-- 💞️ previous worked in [shopee](https://shopee.com/), [vivo](https://www.vivo.com/), [FreakOut](https://www.fout.co.jp/), [mixi](https://mixi.co.jp/)
+- 👀 I’m interested in golang, java, spring, docker, kubernetes, GraphQL, Kafka, ElasticSearch, SAAS, CRM, GraphQL
+- 💞️ Previous worked in [shopee](https://shopee.com/), [vivo](https://www.vivo.com/) at Shenzhen, China from 2018 ~ 2022
+- 💞️ Previous worked in [FreakOut](https://www.fout.co.jp/), [mixi](https://mixi.co.jp/) at Tokyo, Japan from 2012 ~ 2017 
+- 💞️ Graduated from China University of Geoscience，with the master of Computer Science & Technology
+- 💞️ I`m also fluent in Japanese as my second foreign language
 - 📫 How to reach me chenjun835 [at] 163 [dot] com
