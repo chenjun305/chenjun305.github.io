@@ -6,3 +6,4 @@ _site
 .ruby-version
 .tweet-cache
 vendor
+Gemfile.lock
