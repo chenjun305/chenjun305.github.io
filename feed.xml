@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="cn"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://chenjun305.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://chenjun305.github.io/" rel="alternate" type="text/html" hreflang="cn"/><updated>2023-02-04T04:57:39+00:00</updated><id>https://chenjun305.github.io/feed.xml</id><title type="html">blank</title><subtitle>chenjun personal site and blog </subtitle><entry><title type="html">python2.7+django1.6 连接MySQL8</title><link href="https://chenjun305.github.io/blog/2020/python2-django1-connect-mysql/" rel="alternate" type="text/html" title="python2.7+django1.6 连接MySQL8"/><published>2020-04-25T18:25:31+00:00</published><updated>2020-04-25T18:25:31+00:00</updated><id>https://chenjun305.github.io/blog/2020/python2-django1-connect-mysql</id><content type="html" xml:base="https://chenjun305.github.io/blog/2020/python2-django1-connect-mysql/"><![CDATA[<h3 id="项目版本">项目版本</h3> <p>Python 2.7.10 + Django 1.6.11 + MySQL 8.0.19</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python --version
+Python 2.7.10
+
+$ python -c "import django; print(django.get_version())"
+1.6.11
+
+$ mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 20
+Server version: 8.0.19 MySQL Community Server - GPL
+</code></pre></div></div> <h3 id="使用pymysql模块">使用PyMySQL模块</h3> <p>PyMySQL. - <a href="https://pypi.org/project/PyMySQL/">https://pypi.org/project/PyMySQL/</a></p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pip install PyMySQL
+......
+Successfully installed PyMySQL-0.9.3
+</code></pre></div></div> <h3 id="更改django配置">更改Django配置</h3> <p>在站点的__init__.py文件中必须加入一下的代码：</p> <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pymysql</span>
+
+<span class="n">pymysql</span><span class="p">.</span><span class="n">install_as_MySQLdb</span><span class="p">()</span></code></pre></figure> <h3 id="验证">验证</h3> <p>在django项目目录中执行：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py syncdb
+Creating tables ...
+Creating table django_admin_log
+Creating table auth_permission
+Creating table auth_group_permissions
+Creating table auth_group
+Creating table auth_user_groups
+Creating table auth_user_user_permissions
+Creating table auth_user
+Creating table django_content_type
+Creating table django_session
+You just installed Django's auth system, which means you don't have any superusers defined.
+Would you like to create one now? (yes/no): yes
+Username (leave blank to use 'xxx'): admin
+Email address: xxx
+Password: 
+Password (again): 
+Superuser created successfully.
+Installing custom SQL ...
+Installing indexes ...
+Installed 0 object(s) from 0 fixture(s)
+</code></pre></div></div>]]></content><author><name></name></author><category term="programming"/><category term="python"/><summary type="html"><![CDATA[项目版本]]></summary></entry><entry><title type="html">Mac通过Docker Desktop安装MySQL</title><link href="https://chenjun305.github.io/blog/2020/mac-docker-install-mysql/" rel="alternate" type="text/html" title="Mac通过Docker Desktop安装MySQL"/><published>2020-04-24T13:56:49+00:00</published><updated>2020-04-24T13:56:49+00:00</updated><id>https://chenjun305.github.io/blog/2020/mac-docker-install-mysql</id><content type="html" xml:base="https://chenjun305.github.io/blog/2020/mac-docker-install-mysql/"><![CDATA[<h3 id="下载-docker-desktop">下载 Docker Desktop</h3> <p><a href="https://docs.docker.com/docker-for-mac/install/">https://docs.docker.com/docker-for-mac/install/</a></p> <h3 id="创建存放mysql数据的目录">创建存放Mysql数据的目录</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir -p /Users/junchen/Develop/mysql_data/8.0
+</code></pre></div></div> <h3 id="创建网络">创建网络</h3> <p>使相同网络的容器间可以通过name通信（而不是IP）。</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker network create dev-network
+</code></pre></div></div> <h3 id="创建mysql80容器">创建MySQL8.0容器</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker run --restart always --name mysql8.0 --net dev-network -v /Users/[your_username]/Develop/mysql_data/8.0:/var/lib/mysql -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=[your_password] mysql:8.0
+</code></pre></div></div> <p>注意替换[your_username] ， [your_password] 为你自己的。 此命令拉取官方docker hub的image，可能需要连外网。</p> <h3 id="安装并安装mysql-workbench80版">安装并安装Mysql workbench（8.0版）</h3> <p><a href="https://dev.mysql.com/downloads/workbench/">https://dev.mysql.com/downloads/workbench/</a></p> <h3 id="连接docker中的mysql">连接docker中的Mysql</h3> <p>创建数据库创建表都没有问题，并且数据不会丢失。</p> <h3 id="进入容器命令行">进入容器命令行</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker exec -it bddb2e3371b8 bash
+</code></pre></div></div>]]></content><author><name></name></author><category term="devops"/><category term="docker"/><summary type="html"><![CDATA[下载 Docker Desktop]]></summary></entry><entry><title type="html">django1.6常用命令总结</title><link href="https://chenjun305.github.io/blog/2020/dango-command/" rel="alternate" type="text/html" title="django1.6常用命令总结"/><published>2020-04-22T22:20:52+00:00</published><updated>2020-04-22T22:20:52+00:00</updated><id>https://chenjun305.github.io/blog/2020/dango-command</id><content type="html" xml:base="https://chenjun305.github.io/blog/2020/dango-command/"><![CDATA[<h3 id="判断django版本">判断django版本</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python -c "import django; print(django.get_version())"
+1.6.11
+</code></pre></div></div> <h3 id="创建项目">创建项目</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ django-admin.py startproject myblog
+</code></pre></div></div> <h3 id="启动服务器">启动服务器</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py runserver
+$ python manage.py runserver 8080  #更改默认端口
+$ python manage.py runserver 0.0.0.0:8000 #listen on all public IPs 
+</code></pre></div></div> <blockquote> <p>Automatic reloading of runserver The development server automatically reloads Python code for each request as needed. You don’t need to restart the server for code changes to take effect. However, some actions like adding files or compiling translation files don’t trigger a restart, so you’ll have to restart the server in these cases.</p> </blockquote> <h3 id="创建应用">创建应用</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py startapp blog
+</code></pre></div></div> <h3 id="自动创建表">自动创建表</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py sqlall polls  # 查看应用polls的SQL语句
+$ python manage.py syncdb
+Creating tables ...
+Creating table django_admin_log
+Creating table auth_permission
+Creating table auth_group_permissions
+Creating table auth_group
+Creating table auth_user_groups
+Creating table auth_user_user_permissions
+Creating table auth_user
+Creating table django_content_type
+Creating table django_session
+Creating table blog_article
+
+You just installed Django's auth system, which means you don't have any superusers defined.
+Would you like to create one now? (yes/no): yes
+Username (leave blank to use 'xxx'): 
+Email address: xxx@xxx
+Password: 
+Password (again): 
+Superuser created successfully.
+Installing custom SQL ...
+Installing indexes ...
+Installed 0 object(s) from 0 fixture(s)
+</code></pre></div></div> <p>The syncdb command looks at all your available models and creates tables in your database for whichever tables don’t already exist.</p> <h3 id="进入项目的交互式shell环境">进入项目的交互式Shell环境</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py shell
+</code></pre></div></div> <h3 id="生成项目requirementstxt">生成项目requirements.txt</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pip freeze &gt;requirements.txt
+</code></pre></div></div> <h3 id="安装python项目依赖">安装python项目依赖</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pip install -r requirements.txt
+</code></pre></div></div>]]></content><author><name></name></author><category term="programming"/><category term="python"/><summary type="html"><![CDATA[判断django版本 $ python -c "import django; print(django.get_version())" 1.6.11 创建项目 $ django-admin.py startproject myblog 启动服务器 $ python manage.py runserver $ python manage.py runserver 8080 #更改默认端口 $ python manage.py runserver 0.0.0.0:8000 #listen on all public IPs Automatic reloading of runserver The development server automatically reloads Python code for each request as needed. You don’t need to restart the server for code changes to take effect. However, some actions like adding files or compiling translation files don’t trigger a restart, so you’ll have to restart the server in these cases.]]></summary></entry><entry><title type="html">django初体验</title><link href="https://chenjun305.github.io/blog/2020/django-first-app/" rel="alternate" type="text/html" title="django初体验"/><published>2020-04-21T22:20:52+00:00</published><updated>2020-04-21T22:20:52+00:00</updated><id>https://chenjun305.github.io/blog/2020/django-first-app</id><content type="html" xml:base="https://chenjun305.github.io/blog/2020/django-first-app/"><![CDATA[<h3 id="创建项目">创建项目</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ django-admin.py startproject myblog
+$ cd myblog/
+$ tree
+.
+├── manage.py
+└── myblog
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+</code></pre></div></div> <p>manage.py - 项目的命令管理器</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py runserver
+Validating models...
+
+0 errors found
+April 21, 2020 - 14:21:57
+Django version 1.6.11, using settings 'myblog.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+</code></pre></div></div> <p>这样就可以访问网站了</p> <h3 id="项目下创建应用">项目下创建应用</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>myblog$ python manage.py startapp blog
+myblog$ tree -I *.pyc      # 不列出pyc文件
+.
+├── blog
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── models.py
+│   ├── tests.py
+│   └── views.py
+├── manage.py
+└── myblog
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+</code></pre></div></div> <p>一定记得在settings.py中把新创建的应用加入你刚刚创建的应用。</p> <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">'django.contrib.admin'</span><span class="p">,</span>
+    <span class="s">'django.contrib.auth'</span><span class="p">,</span>
+    <span class="s">'django.contrib.contenttypes'</span><span class="p">,</span>
+    <span class="s">'django.contrib.sessions'</span><span class="p">,</span>
+    <span class="s">'django.contrib.messages'</span><span class="p">,</span>
+    <span class="s">'django.contrib.staticfiles'</span><span class="p">,</span>
+    <span class="s">'blog'</span><span class="p">,</span>
+<span class="p">)</span></code></pre></figure> <h3 id="编写传说中的hello-world">编写传说中的Hello World</h3> <p>编写blog/views.py，添加以下内容：</p> <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">'Hello, world!'</span><span class="p">)</span></code></pre></figure> <p>修改myblog/urls.py</p> <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">blog.views</span> <span class="k">as</span> <span class="n">bv</span>
+
+<span class="n">admin</span><span class="p">.</span><span class="n">autodiscover</span><span class="p">()</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s">''</span><span class="p">,</span>
+    <span class="c1"># Examples:
+</span>    <span class="c1"># url(r'^$', 'myblog.views.home', name='home'),
+</span>    <span class="c1"># url(r'^blog/', include('blog.urls')),
+</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s">'^admin/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">urls</span><span class="p">)),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s">'^index/'</span><span class="p">,</span> <span class="n">bv</span><span class="p">.</span><span class="n">index</span><span class="p">),</span>
+<span class="p">)</span></code></pre></figure> <p>启动服务器，Hello world就完成了</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python manage.py runserver
+</code></pre></div></div>]]></content><author><name></name></author><category term="programming"/><category term="python"/><summary type="html"><![CDATA[创建项目]]></summary></entry><entry><title type="html">Mac下Python开发环境配置</title><link href="https://chenjun305.github.io/blog/2020/mac-python-env/" rel="alternate" type="text/html" title="Mac下Python开发环境配置"/><published>2020-04-21T21:34:07+00:00</published><updated>2020-04-21T21:34:07+00:00</updated><id>https://chenjun305.github.io/blog/2020/mac-python-env</id><content type="html" xml:base="https://chenjun305.github.io/blog/2020/mac-python-env/"><![CDATA[<h3 id="安装homebrew及一些很有用的工具">安装Homebrew及一些很有用的工具</h3> <figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nv">$ </span>/bin/bash <span class="nt">-c</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/master/install.sh<span class="si">)</span><span class="s2">"</span>
+<span class="nv">$ </span>brew <span class="nb">install </span>wget // 安装wget工具
+<span class="nv">$ </span>brew <span class="nb">install </span>tree  // 安装tree这个很有用的工具，树结构列出文件夹</code></pre></figure> <h3 id="git配置">git配置</h3> <p>Mac终端中输入git命令会触发安装开发工具的提示，按照提示就可以把git安装好。</p> <figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nv">$ </span>git config <span class="nt">--global</span> alias.ci commit
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.co checkout
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.st status
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.br branch
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.pl pull
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.ps push
+<span class="nv">$ </span>git config <span class="nt">--global</span> alias.lg <span class="s2">"log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset' --abbrev-commit"</span>
+<span class="nv">$ </span>git config <span class="nt">--global</span> user.name <span class="s2">"你的用户名"</span>
+<span class="nv">$ </span>git config <span class="nt">--global</span> user.email <span class="s2">"你的邮件地址"</span>
+<span class="nv">$ </span>git config <span class="nt">--global</span> color.ui auto</code></pre></figure> <p>配置存储在～/.gitconfg文件里</p> <h3 id="生成ssh-key">生成SSH Key</h3> <p>用于服务器远程登陆，git clone私有项目等，推荐生成比RSA更安全更高效的ed25519</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~$ ssh-keygen -t ed25519 -C " 你的邮件地址 "
+~$ ls .ssh/
+id_ed25519     id_ed25519.pub
+</code></pre></div></div> <h3 id="安装bash-completion及git-completion">安装bash-completion及git-completion</h3> <figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nv">$ </span>brew <span class="nb">install </span>bash-completion
+<span class="nv">$ </span><span class="nb">cd</span> /usr/local/opt/bash-completion/etc/bash_completion.d/
+<span class="nv">$ </span>curl <span class="nt">-L</span> <span class="nt">-O</span> https://raw.github.com/git/git/master/contrib/completion/git-completion.bash
+<span class="nv">$ </span>brew <span class="nb">unlink </span>bash-completion
+<span class="nv">$ </span>brew <span class="nb">link </span>bash-completion</code></pre></figure> <p>按照提示将</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] &amp;&amp; . "/usr/local/etc/profile.d/bash_completion.sh"
+</code></pre></div></div> <p>放入.bash_profile文件。</p> <h3 id="把终端配置的漂亮一点">把终端配置的漂亮一点</h3> <p>编辑.bash_profile文件，加入以下内容</p> <figure class="highlight"><pre><code class="language-shell" data-lang="shell">find_git_branch <span class="o">()</span> <span class="o">{</span>
+     <span class="nb">local dir</span><span class="o">=</span><span class="nb">.</span> <span class="nb">head
+     </span><span class="k">until</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$dir</span><span class="s2">"</span> <span class="nt">-ef</span> / <span class="o">]</span><span class="p">;</span> <span class="k">do
+         if</span> <span class="o">[</span> <span class="nt">-f</span> <span class="s2">"</span><span class="nv">$dir</span><span class="s2">/.git/HEAD"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+             </span><span class="nb">head</span><span class="o">=</span><span class="si">$(</span>&lt; <span class="s2">"</span><span class="nv">$dir</span><span class="s2">/.git/HEAD"</span><span class="si">)</span>
+             <span class="k">if</span> <span class="o">[[</span> <span class="nv">$head</span> <span class="o">=</span> ref:<span class="se">\ </span>refs/heads/<span class="k">*</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+                 </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">" (</span><span class="k">${</span><span class="nv">head</span><span class="p">#*/*/</span><span class="k">}</span><span class="s2">) "</span>
+             <span class="k">elif</span> <span class="o">[[</span> <span class="nv">$head</span> <span class="o">!=</span> <span class="s1">''</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+                 </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">" (detached) "</span>
+             <span class="k">else
+                 </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">" (unknow) "</span>
+             <span class="k">fi
+             return
+         fi
+         </span><span class="nb">dir</span><span class="o">=</span><span class="s2">"../</span><span class="nv">$dir</span><span class="s2">"</span>
+     <span class="k">done
+     </span><span class="nv">git_branch</span><span class="o">=</span><span class="s1">''</span>
+ <span class="o">}</span>
+ 
+ <span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s2">"find_git_branch; </span><span class="nv">$PROMPT_COMMAND</span><span class="s2">"</span>
+ 
+ <span class="nb">export </span><span class="nv">CLICOLOR</span><span class="o">=</span>1
+ <span class="nv">PS1</span><span class="o">=</span><span class="s2">"</span><span class="se">\w\$</span><span class="s2">git_branch</span><span class="se">\$</span><span class="s2"> "</span>
+ <span class="nb">export </span><span class="nv">LSCOLORS</span><span class="o">=</span>gxfxaxdxcxegedabagacad</code></pre></figure> <p>添加命令别名配置，把下面命令加入.bash_profile</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alias l='ls -lah'
+alias grep='grep --color'
+</code></pre></div></div> <p>让配置立即生效的命令是：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ source .bash_profile 
+</code></pre></div></div> <h3 id="配置vim">配置vim</h3> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+$ sh ~/.vim_runtime/install_awesome_vimrc.sh
+</code></pre></div></div> <h3 id="pip--django安装">pip &amp; Django安装</h3> <p>Mac自带的Python是2.7版本，通过以下命令安装pip</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+$ python get-pip.py
+</code></pre></div></div> <p>.bash_profile加入以下内容</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export PIP_BIN=/Users/junchen/Library/Python/2.7/bin
+export PATH=$PATH:$PIP_BIN
+</code></pre></div></div> <p>安装Django</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ pip install Django==1.6.11
+</code></pre></div></div> <p>检查django是否安装成功</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~$ python
+Python 2.7.10 (default, Aug 17 2018, 19:45:58) 
+[GCC 4.2.1 Compatible Apple LLVM 10.0.0 (clang-1000.0.42)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import django
+&gt;&gt;&gt; 
+</code></pre></div></div> <p>没有报错说明安装成功了。 django被安装到以下目录：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/Library/Python/2.7/lib/python/site-packages/
+</code></pre></div></div> <h3 id="安装pycharm">安装pycharm</h3> <p><a href="https://www.jetbrains.com/pycharm/download/">https://www.jetbrains.com/pycharm/download/</a> 可以下载免费的社区版安装即可</p>]]></content><author><name></name></author><category term="devops"/><category term="python"/><summary type="html"><![CDATA[安装Homebrew及一些很有用的工具]]></summary></entry><entry><title type="html">Mybatis的mapper文件中$和#的区别</title><link href="https://chenjun305.github.io/blog/2019/mybatis-mapper/" rel="alternate" type="text/html" title="Mybatis的mapper文件中$和#的区别"/><published>2019-01-15T10:28:21+00:00</published><updated>2019-01-15T10:28:21+00:00</updated><id>https://chenjun305.github.io/blog/2019/mybatis-mapper</id><content type="html" xml:base="https://chenjun305.github.io/blog/2019/mybatis-mapper/"><![CDATA[<p>一般来说，我们使用mybatis generator来生成mapper.xml文件时，会生成一些增删改查的文件，这些文件中需要传入一些参数，传参数的时候，我们会注意到，参数的大括号外面，有两种符号，一种是#，一种是$。这两种符号有什么区别呢？</p> <figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employee</span> <span class="k">WHERE</span> <span class="n">name</span><span class="o">=#</span><span class="p">{</span><span class="n">name</span><span class="p">}</span>
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employee</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="err">$</span><span class="p">{</span><span class="n">salary</span><span class="p">}</span></code></pre></figure> <p>从上面的内容我们可以比较清楚的看到，一般#{}用于传递查询的参数，一般用于从dao层传递一个string或者其他的参数过来，mybatis对这个参数会进行加引号的操作，将参数转变为一个字符串。</p> <p>比如，这边我们想根据姓名查询某个人的信息，我们会从dao传一个参数，比如jack过来，mybatis生成对应的sql为：</p> <figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employee</span> <span class="k">WHERE</span> <span class="n">name</span><span class="o">=</span><span class="nv">"jack"</span></code></pre></figure> <p>而$则不同，我们一般用于ORDER BY的后面。此时mybatis对这个参数不会进行任何的处理，直接生成sql语句。例如，此处我们传入salary作为参数，传入第二个中，此时，mybatis生成的sql语句为：</p> <figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employee</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">salary</span></code></pre></figure> <p>可以看到，mybatis对其没有做任何的处理。</p> <p>但是，我们一般推荐使用的是#{}，不使用${}的原因如下：</p> <p>会引起sql注入，因为${}会直接参与sql编译 会影响sql语句的预编译，因为 ${ } 仅仅为一个纯碎的 string 替换，在动态 SQL 解析阶段将会进行变量替换 这是一个比较小的知识点，但是也容易为遗忘，所以记录在此。</p>]]></content><author><name></name></author><category term="programming"/><category term="java"/><summary type="html"><![CDATA[一般来说，我们使用mybatis generator来生成mapper.xml文件时，会生成一些增删改查的文件，这些文件中需要传入一些参数，传参数的时候，我们会注意到，参数的大括号外面，有两种符号，一种是#，一种是$。这两种符号有什么区别呢？]]></summary></entry><entry><title type="html">Java8新的日期和时间API</title><link href="https://chenjun305.github.io/blog/2018/java-8-date-time/" rel="alternate" type="text/html" title="Java8新的日期和时间API"/><published>2018-01-31T15:51:48+00:00</published><updated>2018-01-31T15:51:48+00:00</updated><id>https://chenjun305.github.io/blog/2018/java-8-date-time</id><content type="html" xml:base="https://chenjun305.github.io/blog/2018/java-8-date-time/"><![CDATA[<h2 id="localdate">LocalDate</h2> <p>该类的实例是一个不 可变对象，它只提供了简单的日期，并不含当天的时间信息。另外，它也不附带任何与时区相关 10 的信息。</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">year</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">getYear</span><span class="o">();</span>
+<span class="nc">Month</span> <span class="n">month</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">getMonth</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">day</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">getDayOfMonth</span><span class="o">();</span>
+<span class="nc">DayOfWeek</span> <span class="n">dow</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">getDayOfWeek</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">lengthOfMonth</span><span class="o">();</span>
+<span class="kt">boolean</span> <span class="n">leap</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">isLeapYear</span><span class="o">();</span>
+<span class="c1">// 你还可以使用工厂方法从系统时钟中获取当前的日期:</span>
+<span class="nc">LocalDate</span> <span class="n">today</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">now</span><span class="o">();</span>
+<span class="nc">LocalDate</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"2014-03-18"</span><span class="o">);</span></code></pre></figure> <p>所有日期时间类，这些类都提供了类似的工厂方法。你还可以通过传递一个TemporalField参数给get方法拿到同样的信息。TemporalField是一个接口，它定 义了如何访问temporal对象某个字段的值。ChronoField枚举实现了这一接口，所以你可以很 方便地使用get方法得到枚举元素的值，如下所示。 使用TemporalField读取LocalDate的值</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">year</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">YEAR</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">month</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">MONTH_OF_YEAR</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">day</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">DAY_OF_MONTH</span><span class="o">);</span></code></pre></figure> <h2 id="localtime">LocalTime</h2> <p>类似地，一天中的时间，比如13:45:20，可以使用LocalTime类表示。你可以使用of重载的 两个工厂方法创建LocalTime的实例。第一个重载函数接收小时和分钟，第二个重载函数同时还 接收秒。</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalTime</span> <span class="n">time</span> <span class="o">=</span> <span class="nc">LocalTime</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">13</span><span class="o">,</span> <span class="mi">45</span><span class="o">,</span> <span class="mi">20</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">hour</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">getHour</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">getMinute</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">second</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">getSecond</span><span class="o">();</span>
+<span class="nc">LocalTime</span> <span class="n">time</span> <span class="o">=</span> <span class="nc">LocalTime</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"13:45:20"</span><span class="o">);</span></code></pre></figure> <h2 id="合并日期和时间localdatetime">合并日期和时间LocalDateTime</h2> <p>这个复合类名叫LocalDateTime，是LocalDate和LocalTime的合体。它同时表示了日期 和时间，但不带有时区信息，你可以直接创建，也可以通过合并日期和时间对象构造，</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// 2014-03-18T13:45:20</span>
+<span class="nc">LocalDateTime</span> <span class="n">dt1</span> <span class="o">=</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="nc">Month</span><span class="o">.</span><span class="na">MARCH</span><span class="o">,</span> <span class="mi">18</span><span class="o">,</span> <span class="mi">13</span><span class="o">,</span> <span class="mi">45</span><span class="o">,</span> <span class="mi">20</span><span class="o">);</span> <span class="nc">LocalDateTime</span> <span class="n">dt2</span> <span class="o">=</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">date</span><span class="o">,</span> <span class="n">time</span><span class="o">);</span>
+<span class="nc">LocalDateTime</span> <span class="n">dt3</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">atTime</span><span class="o">(</span><span class="mi">13</span><span class="o">,</span> <span class="mi">45</span><span class="o">,</span> <span class="mi">20</span><span class="o">);</span>
+<span class="nc">LocalDateTime</span> <span class="n">dt4</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">atTime</span><span class="o">(</span><span class="n">time</span><span class="o">);</span>
+<span class="nc">LocalDateTime</span> <span class="n">dt5</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="na">atDate</span><span class="o">(</span><span class="n">date</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="n">dt1</span><span class="o">.</span><span class="na">toLocalDate</span><span class="o">();</span>
+<span class="nc">LocalTime</span> <span class="n">time1</span> <span class="o">=</span> <span class="n">dt1</span><span class="o">.</span><span class="na">toLocalTime</span><span class="o">();</span></code></pre></figure> <h2 id="instant">Instant</h2> <p>新的java.time.Instant类对时间建模的方 式，基本上它是以Unix元年时间(传统的设定为UTC时区1970年1月1日午夜时分)开始所经历的 秒数进行计算。</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Instant</span><span class="o">.</span><span class="na">ofEpochSecond</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+<span class="nc">Instant</span><span class="o">.</span><span class="na">ofEpochSecond</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+<span class="nc">Instant</span><span class="o">.</span><span class="na">ofEpochSecond</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">1_000_000_000</span><span class="o">);</span>
+<span class="nc">Instant</span><span class="o">.</span><span class="na">ofEpochSecond</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="o">-</span><span class="mi">1_000_000_000</span><span class="o">);</span>
+<span class="nc">Instant</span><span class="o">.</span><span class="na">now</span><span class="o">()</span></code></pre></figure> <h2 id="duration">Duration</h2> <p>可以创建两个LocalTimes对象、两个LocalDateTimes对象，或者两个Instant对象之间的duration，如下所示:</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Duration</span> <span class="n">d1</span> <span class="o">=</span> <span class="nc">Duration</span><span class="o">.</span><span class="na">between</span><span class="o">(</span><span class="n">time1</span><span class="o">,</span> <span class="n">time2</span><span class="o">);</span>
+<span class="nc">Duration</span> <span class="n">d1</span> <span class="o">=</span> <span class="nc">Duration</span><span class="o">.</span><span class="na">between</span><span class="o">(</span><span class="n">dateTime1</span><span class="o">,</span> <span class="n">dateTime2</span><span class="o">);</span>
+<span class="nc">Duration</span> <span class="n">d2</span> <span class="o">=</span> <span class="nc">Duration</span><span class="o">.</span><span class="na">between</span><span class="o">(</span><span class="n">instant1</span><span class="o">,</span> <span class="n">instant2</span><span class="o">);</span>
+
+<span class="nc">Duration</span> <span class="n">threeMinutes</span> <span class="o">=</span> <span class="nc">Duration</span><span class="o">.</span><span class="na">ofMinutes</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+<span class="nc">Duration</span> <span class="n">threeMinutes</span> <span class="o">=</span> <span class="nc">Duration</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="nc">ChronoUnit</span><span class="o">.</span><span class="na">MINUTES</span><span class="o">);</span></code></pre></figure> <p>由于LocalDateTime和Instant是为不同的目的而设计的，一个是为了便于人阅读使用， 另一个是为了便于机器处理，所以你不能将二者混用。</p> <h2 id="period">Period</h2> <p>Period类。使用该类的工厂方法between，你可以使用得到两个LocalDate之间的时长，如下所示:</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">Period</span> <span class="n">tenDays</span> <span class="o">=</span> <span class="nc">Period</span><span class="o">.</span><span class="na">between</span><span class="o">(</span><span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">8</span><span class="o">),</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">));</span>
+<span class="nc">Period</span> <span class="n">tenDays</span> <span class="o">=</span> <span class="nc">Period</span><span class="o">.</span><span class="na">ofDays</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+<span class="nc">Period</span> <span class="n">threeWeeks</span> <span class="o">=</span> <span class="nc">Period</span><span class="o">.</span><span class="na">ofWeeks</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+<span class="nc">Period</span> <span class="n">twoYearsSixMonthsOneDay</span> <span class="o">=</span> <span class="nc">Period</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span></code></pre></figure> <h2 id="操纵解析和格式化日期">操纵、解析和格式化日期</h2> <ul> <li>withAttribute方法会创建对象的一个副本，并按照需要修改它的属性。</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="n">date1</span><span class="o">.</span><span class="na">withYear</span><span class="o">(</span><span class="mi">2011</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date3</span> <span class="o">=</span> <span class="n">date2</span><span class="o">.</span><span class="na">withDayOfMonth</span><span class="o">(</span><span class="mi">25</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date4</span> <span class="o">=</span> <span class="n">date3</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">MONTH_OF_YEAR</span><span class="o">,</span> <span class="mi">9</span><span class="o">);</span></code></pre></figure> <ul> <li>以相对方式修改LocalDate对象的属性</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="n">date1</span><span class="o">.</span><span class="na">plusWeeks</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date3</span> <span class="o">=</span> <span class="n">date2</span><span class="o">.</span><span class="na">minusYears</span><span class="o">(</span><span class="mi">3</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date4</span> <span class="o">=</span> <span class="n">date3</span><span class="o">.</span><span class="na">plus</span><span class="o">(</span><span class="mi">6</span><span class="o">,</span> <span class="nc">ChronoUnit</span><span class="o">.</span><span class="na">MONTHS</span><span class="o">);</span></code></pre></figure> <ul> <li>TemporalAdjuster</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// 使用预定义的TemporalAdjuster</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">time</span><span class="o">.</span><span class="na">temporal</span><span class="o">.</span><span class="na">TemporalAdjusters</span><span class="o">.*;</span>
+<span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="n">date1</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">nextOrSame</span><span class="o">(</span><span class="nc">DayOfWeek</span><span class="o">.</span><span class="na">SUNDAY</span><span class="o">));</span> 
+<span class="nc">LocalDate</span> <span class="n">date3</span> <span class="o">=</span> <span class="n">date2</span><span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="n">lastDayOfMonth</span><span class="o">());</span></code></pre></figure> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// TemporalAdjuster接口</span>
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">TemporalAdjuster</span> <span class="o">{</span>
+    <span class="nc">Temporal</span> <span class="nf">adjustInto</span><span class="o">(</span><span class="nc">Temporal</span> <span class="n">temporal</span><span class="o">);</span>
+<span class="o">}</span></code></pre></figure> <h2 id="datetimeformatter">DateTimeFormatter</h2> <p>格式化以及解析日期时间对象是另一个非常重要的功能。新的 java.time.format包就是特别为这个目的而设计的。 和老的java.util.DateFormat相比较，所有的DateTimeFormatter实例都是线程安全 的。</p> <ul> <li>创建格式器最简单的方法是通过它的静态工厂方法以及常量</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">BASIC_ISO_DATE</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">ISO_LOCAL_DATE</span><span class="o">);</span>
+
+<span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"20140318"</span><span class="o">,</span> <span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">BASIC_ISO_DATE</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">"2014-03-18"</span><span class="o">,</span> <span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">ISO_LOCAL_DATE</span><span class="o">);</span></code></pre></figure> <ul> <li>按照某个模式创建DateTimeFormatter</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">DateTimeFormatter</span> <span class="n">formatter</span> <span class="o">=</span> <span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">ofPattern</span><span class="o">(</span><span class="s">"dd/MM/yyyy"</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">formattedDate</span> <span class="o">=</span> <span class="n">date1</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">formatter</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">formattedDate</span><span class="o">,</span> <span class="n">formatter</span><span class="o">);</span></code></pre></figure> <ul> <li>创建一个本地化的DateTimeFormatter</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">DateTimeFormatter</span> <span class="n">italianFormatter</span> <span class="o">=</span> <span class="nc">DateTimeFormatter</span><span class="o">.</span><span class="na">ofPattern</span><span class="o">(</span><span class="s">"d. MMMM yyyy"</span><span class="o">,</span> <span class="nc">Locale</span><span class="o">.</span><span class="na">ITALIAN</span><span class="o">);</span>
+<span class="nc">LocalDate</span> <span class="n">date1</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">String</span> <span class="n">formattedDate</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">italianFormatter</span><span class="o">);</span> <span class="c1">// 18. marzo 2014 </span>
+<span class="nc">LocalDate</span> <span class="n">date2</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">formattedDate</span><span class="o">,</span> <span class="n">italianFormatter</span><span class="o">);</span></code></pre></figure> <ul> <li>DateTimeFormatterBuilder 如果你还需要更加细粒度的控制，DateTimeFormatterBuilder类还提供了更复杂 的格式器，你可以选择恰当的方法，一步一步地构造自己的格式器。</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">DateTimeFormatter</span> <span class="n">italianFormatter</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DateTimeFormatterBuilder</span><span class="o">().</span><span class="na">appendText</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">DAY_OF_MONTH</span><span class="o">)</span>
+<span class="o">.</span><span class="na">appendLiteral</span><span class="o">(</span><span class="s">". "</span><span class="o">)</span>
+<span class="o">.</span><span class="na">appendText</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">MONTH_OF_YEAR</span><span class="o">)</span>
+<span class="o">.</span><span class="na">appendLiteral</span><span class="o">(</span><span class="s">" "</span><span class="o">)</span>
+<span class="o">.</span><span class="na">appendText</span><span class="o">(</span><span class="nc">ChronoField</span><span class="o">.</span><span class="na">YEAR</span><span class="o">)</span>
+<span class="o">.</span><span class="na">parseCaseInsensitive</span><span class="o">()</span>
+<span class="o">.</span><span class="na">toFormatter</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">ITALIAN</span><span class="o">);</span></code></pre></figure> <h2 id="处理不同的时区和历法">处理不同的时区和历法</h2> <p>新的java.time.ZoneId 类是老版java.util.TimeZone的替代品。跟其他日期和时间类一 样，ZoneId类也是无法修改的。</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">ZoneId</span> <span class="n">romeZone</span> <span class="o">=</span> <span class="nc">ZoneId</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Europe/Rome"</span><span class="o">);</span></code></pre></figure> <ul> <li>为时间点添加时区信息</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="nc">Month</span><span class="o">.</span><span class="na">MARCH</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span> <span class="mi">6</span>
+<span class="nc">ZonedDateTime</span> <span class="n">zdt1</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="na">atStartOfDay</span><span class="o">(</span><span class="n">romeZone</span><span class="o">);</span></code></pre></figure> <ul> <li>通过ZoneId，你还可以将LocalDateTime转换为Instant:</li> </ul> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDateTime</span> <span class="n">dateTime</span> <span class="o">=</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="nc">Month</span><span class="o">.</span><span class="na">MARCH</span><span class="o">,</span> <span class="mi">18</span><span class="o">,</span> <span class="mi">13</span><span class="o">,</span> <span class="mi">45</span><span class="o">);</span> 
+<span class="nc">Instant</span> <span class="n">instantFromDateTime</span> <span class="o">=</span> <span class="n">dateTime</span><span class="o">.</span><span class="na">toInstant</span><span class="o">(</span><span class="n">romeZone</span><span class="o">);</span>
+
+<span class="nc">Instant</span> <span class="n">instant</span> <span class="o">=</span> <span class="nc">Instant</span><span class="o">.</span><span class="na">now</span><span class="o">();</span>
+<span class="nc">LocalDateTime</span> <span class="n">timeFromInstant</span> <span class="o">=</span> <span class="nc">LocalDateTime</span><span class="o">.</span><span class="na">ofInstant</span><span class="o">(</span><span class="n">instant</span><span class="o">,</span> <span class="n">romeZone</span><span class="o">);</span></code></pre></figure> <h2 id="使用别的日历系统">使用别的日历系统</h2> <p>ISO-8601日历系统是世界文明日历系统的事实标准。但是，Java 8中另外还提供了4种其他的 日历系统。这些日历系统中的每一个都有一个对应的日志类，分别是ThaiBuddhistDate、 MinguoDate 、 JapaneseDate 以 及 HijrahDate 。 所 有 这 些 类 以 及 LocalDate 都 实 现 了 ChronoLocalDate接口，能够对公历的日期进行建模。</p> <figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="nc">LocalDate</span> <span class="n">date</span> <span class="o">=</span> <span class="nc">LocalDate</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="mi">2014</span><span class="o">,</span> <span class="nc">Month</span><span class="o">.</span><span class="na">MARCH</span><span class="o">,</span> <span class="mi">18</span><span class="o">);</span>
+<span class="nc">JapaneseDate</span> <span class="n">japaneseDate</span> <span class="o">=</span> <span class="nc">JapaneseDate</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">date</span><span class="o">);</span>
+
+<span class="nc">Chronology</span> <span class="n">japaneseChronology</span> <span class="o">=</span> <span class="nc">Chronology</span><span class="o">.</span><span class="na">ofLocale</span><span class="o">(</span><span class="nc">Locale</span><span class="o">.</span><span class="na">JAPAN</span><span class="o">);</span> 
+<span class="nc">ChronoLocalDate</span> <span class="n">now</span> <span class="o">=</span> <span class="n">japaneseChronology</span><span class="o">.</span><span class="na">dateNow</span><span class="o">();</span></code></pre></figure>]]></content><author><name></name></author><category term="programming"/><category term="java"/><summary type="html"><![CDATA[LocalDate 该类的实例是一个不 可变对象，它只提供了简单的日期，并不含当天的时间信息。另外，它也不附带任何与时区相关 10 的信息。 LocalDate date=LocalDate.of(2014, 3, 18); int year=date.getYear(); Month month=date.getMonth(); int day=date.getDayOfMonth(); DayOfWeek dow=date.getDayOfWeek(); int len=date.lengthOfMonth(); boolean leap=date.isLeapYear(); // 你还可以使用工厂方法从系统时钟中获取当前的日期: LocalDate today=LocalDate.now(); LocalDate date=LocalDate.parse("2014-03-18");]]></summary></entry><entry><title type="html">Java常用容器类总结</title><link href="https://chenjun305.github.io/blog/2018/java-collection/" rel="alternate" type="text/html" title="Java常用容器类总结"/><published>2018-01-26T15:14:10+00:00</published><updated>2018-01-26T15:14:10+00:00</updated><id>https://chenjun305.github.io/blog/2018/java-collection</id><content type="html" xml:base="https://chenjun305.github.io/blog/2018/java-collection/"><![CDATA[<h1 id="collection">Collection</h1> <h2 id="list">List</h2> <ul> <li>ArrayList 数组 长于随机访问元素，但在List中间插入和移除元素时较慢</li> <li>LinkedList 链表 随机访问元素比较慢，中间插入和移除元素时较快，优化的顺序访问，特性集比ArrayList更大</li> </ul> <h2 id="set">Set</h2> <p>相同的项只保存1次</p> <ul> <li>HashSet 使用相当复杂的方式来存储元素，这种技术是最快的获取元素的方式。</li> <li>TreeSet 按照比较结果的升序保存对象</li> <li>LinkedHashSet 按照添加的顺序保存对象</li> </ul> <p>HashSet使用的是散列函数，TreeSet将元素存储在红-黑树数据结构中，LinkedHashSet因为查询数据的原因也使用了散列，且使用了链表来维护元素的插入顺序。</p> <h1 id="map">Map</h1> <p>键值对，不必制定尺寸，自动调整尺寸。</p> <ul> <li>HashMap 提供了最快的查找速度，没有按照明显的顺序来保存元素。</li> <li>TreeMap 按照比较结果的升序保存键</li> <li>LinkedHashMap 按照插入顺序保存键， 同时保留了HashMap的查询速度</li> </ul>]]></content><author><name></name></author><category term="programming"/><category term="java"/><summary type="html"><![CDATA[Collection List ArrayList 数组 长于随机访问元素，但在List中间插入和移除元素时较慢 LinkedList 链表 随机访问元素比较慢，中间插入和移除元素时较快，优化的顺序访问，特性集比ArrayList更大]]></summary></entry><entry><title type="html">Java版本演进总结</title><link href="https://chenjun305.github.io/blog/2018/java-version-diff/" rel="alternate" type="text/html" title="Java版本演进总结"/><published>2018-01-26T15:00:31+00:00</published><updated>2018-01-26T15:00:31+00:00</updated><id>https://chenjun305.github.io/blog/2018/java-version-diff</id><content type="html" xml:base="https://chenjun305.github.io/blog/2018/java-version-diff/"><![CDATA[<h2 id="java-5">Java 5</h2> <p>java5是很重要的一个版本，增加了许多新特性</p> <ul> <li>范型</li> <li>注解</li> <li>枚举</li> <li>基本类型的自动装箱和拆箱机制</li> <li>增强的for循环</li> <li>参数长度可变的方法</li> <li>静态导入（import static）</li> </ul> <h2 id="java-6">Java 6</h2> <p>鸡肋的版本，有JDBC4.0更新、Complier API、WebService支持的加强等更新。</p> <h2 id="java-7">Java 7</h2> <ul> <li>switch语句中使用字符串</li> <li>数字字面量的改进</li> <li>优化的异常处理</li> <li>try-with-resources语句</li> <li>优化变长参数的方法调用</li> <li>简化范型类创建的&lt;&gt;操作符</li> </ul> <h1 id="java-8">Java 8</h1> <p>毫无疑问，Java 8是自Java 5（2004年）发布以来Java语言最大的一次版本升级，Java 8带来了很多的新特性</p> <ul> <li><a href="http://www.runoob.com/java/java8-lambda-expressions.html">Lambda 表达式</a></li> <li><a href="http://www.runoob.com/java/java8-method-references.html">方法引用</a></li> <li><a href="http://www.runoob.com/java/java8-functional-interfaces.html">函数式接口</a></li> <li><a href="http://www.runoob.com/java/java8-default-methods.html">默认方法</a></li> <li><a href="http://www.runoob.com/java/java8-streams.html">Stream</a></li> <li><a href="http://www.runoob.com/java/java8-optional-class.html">Optional 类</a></li> <li><a href="http://www.runoob.com/java/java8-nashorn-javascript.html">Nashorn, JavaScript 引擎</a></li> <li><a href="http://www.runoob.com/java/java8-datetime-api.html">新的日期时间 API</a></li> <li><a href="http://www.runoob.com/java/java8-base64.html">Base64</a></li> </ul> <h2 id="java-9">Java 9</h2> <ul> <li>Java平台模块系统</li> <li>Jshell</li> <li>集合、Stream 和 Optional</li> <li>进程 API</li> <li>平台日志 API 和 服务</li> <li>反应式流 （ Reactive Streams ）</li> <li>变量句柄</li> <li>改进方法句柄（Method Handle）</li> <li>并发</li> <li>Nashorn</li> <li>I/O 流新特性</li> <li>改进应用安全性能</li> </ul> <p><a href="https://www.ibm.com/developerworks/cn/java/the-new-features-of-Java-9/index">参考资料</a></p>]]></content><author><name></name></author><category term="programming"/><category term="java"/><summary type="html"><![CDATA[Java 5 java5是很重要的一个版本，增加了许多新特性 范型 注解 枚举 基本类型的自动装箱和拆箱机制 增强的for循环 参数长度可变的方法 静态导入（import static）]]></summary></entry><entry><title type="html">Mac下使用Homebrew安装Mysql</title><link href="https://chenjun305.github.io/blog/2017/mac-brew-install-mysql/" rel="alternate" type="text/html" title="Mac下使用Homebrew安装Mysql"/><published>2017-06-14T15:45:17+00:00</published><updated>2017-06-14T15:45:17+00:00</updated><id>https://chenjun305.github.io/blog/2017/mac-brew-install-mysql</id><content type="html" xml:base="https://chenjun305.github.io/blog/2017/mac-brew-install-mysql/"><![CDATA[<p>测试操作系统为：macOS Sierra 10.12.4</p> <h2 id="关于homebrew">关于Homebrew</h2> <p><a href="http://brew.sh/">Homebrew</a> 简称brew，是Mac OSX上的软件包管理工具，能在Mac中方便的安装软件或者卸载软件，相当于Linux下的apt-get、yum等软件包管理工具。</p> <h2 id="安装homebrew">安装Homebrew</h2> <p>Homebrew的安装非常简单，打开终端，执行下列命令即可： ` $ /usr/bin/ruby -e “$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)” `</p> <h2 id="安装mysql">安装Mysql</h2> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ brew install mysql 
+==&gt; Installing dependencies for mysql: openssl
+==&gt; Installing mysql dependency: openssl
+==&gt; Downloading https://homebrew.bintray.com/bottles/openssl-1.0.2l.sierra.bottle.tar.gz
+######################################################################## 100.0%
+==&gt; Pouring openssl-1.0.2l.sierra.bottle.tar.gz
+==&gt; Using the sandbox
+==&gt; Caveats
+A CA file has been bootstrapped using certificates from the SystemRoots
+keychain. To add additional certificates (e.g. the certificates added in
+the System keychain), place .pem files in
+  /usr/local/etc/openssl/certs
+
+and run
+  /usr/local/opt/openssl/bin/c_rehash
+
+This formula is keg-only, which means it was not symlinked into /usr/local,
+because Apple has deprecated use of OpenSSL in favor of its own TLS and crypto libraries.
+
+If you need to have this software first in your PATH run:
+  echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' &gt;&gt; ~/.bash_profile
+
+For compilers to find this software you may need to set:
+    LDFLAGS:  -L/usr/local/opt/openssl/lib
+    CPPFLAGS: -I/usr/local/opt/openssl/include
+
+==&gt; Summary
+🍺  /usr/local/Cellar/openssl/1.0.2l: 1,709 files, 12.2MB
+==&gt; Installing mysql
+==&gt; Downloading https://homebrew.bintray.com/bottles/mysql-5.7.18_1.sierra.bottle.tar.gz
+######################################################################## 100.0%
+==&gt; Pouring mysql-5.7.18_1.sierra.bottle.tar.gz
+==&gt; /usr/local/Cellar/mysql/5.7.18_1/bin/mysqld --initialize-insecure --user=yueqi --basedir=/usr/local/Cellar/mysql/5.7.18_1 --datadir=/usr/local/var/mysql --tmpdir=/tmp
+==&gt; Caveats
+We've installed your MySQL database without a root password. To secure it run:
+    mysql_secure_installation
+
+MySQL is configured to only allow connections from localhost by default
+
+To connect run:
+    mysql -uroot
+
+To have launchd start mysql now and restart at login:
+  brew services start mysql
+Or, if you don't want/need a background service you can just run:
+  mysql.server start
+==&gt; Summary
+🍺  /usr/local/Cellar/mysql/5.7.18_1: 321 files, 232.9MB
+</code></pre></div></div> <h2 id="启动mysql">启动mysql</h2> <p>安装完并不会默认启动，这时输入mysql命令会出现一下错误。</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mysql 
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
+</code></pre></div></div> <p>启动mysql的命令如下：</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ brew services start mysql
+</code></pre></div></div> <p>或者</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mysql.server start
+</code></pre></div></div> <h2 id="安全配置mysql">安全配置mysql</h2> <p>安装完root用户没有设密码，很不安全，需要配置root用户密码。 并且最好要限制root用户远程访问，删除无名用户和测试库。</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$  mysql_secure_installation
+
+Securing the MySQL server deployment.
+
+Connecting to MySQL using a blank password.
+
+VALIDATE PASSWORD PLUGIN can be used to test passwords
+and improve security. It checks the strength of password
+and allows the users to set only those passwords which are
+secure enough. Would you like to setup VALIDATE PASSWORD plugin?
+
+Press y|Y for Yes, any other key for No: y
+
+There are three levels of password validation policy:
+
+LOW    Length &gt;= 8
+MEDIUM Length &gt;= 8, numeric, mixed case, and special characters
+STRONG Length &gt;= 8, numeric, mixed case, special characters and dictionary                  file
+
+Please enter 0 = LOW, 1 = MEDIUM and 2 = STRONG: 0
+Please set the password for root here.
+
+New password: 
+
+Re-enter new password: 
+
+Estimated strength of the password: 50 
+Do you wish to continue with the password provided?(Press y|Y for Yes, any other key for No) : y
+By default, a MySQL installation has an anonymous user,
+allowing anyone to log into MySQL without having to have
+a user account created for them. This is intended only for
+testing, and to make the installation go a bit smoother.
+You should remove them before moving into a production
+environment.
+
+Remove anonymous users? (Press y|Y for Yes, any other key for No) : y
+Success.
+
+
+Normally, root should only be allowed to connect from
+'localhost'. This ensures that someone cannot guess at
+the root password from the network.
+
+Disallow root login remotely? (Press y|Y for Yes, any other key for No) : y
+Success.
+
+By default, MySQL comes with a database named 'test' that
+anyone can access. This is also intended only for testing,
+and should be removed before moving into a production
+environment.
+
+
+Remove test database and access to it? (Press y|Y for Yes, any other key for No) : y
+ - Dropping test database...
+Success.
+
+ - Removing privileges on test database...
+Success.
+
+Reloading the privilege tables will ensure that all changes
+made so far will take effect immediately.
+
+Reload privilege tables now? (Press y|Y for Yes, any other key for No) : y
+Success.
+
+All done! 
+</code></pre></div></div>]]></content><author><name></name></author><category term="devops"/><category term="mysql"/><summary type="html"><![CDATA[测试操作系统为：macOS Sierra 10.12.4 关于Homebrew Homebrew 简称brew，是Mac OSX上的软件包管理工具，能在Mac中方便的安装软件或者卸载软件，相当于Linux下的apt-get、yum等软件包管理工具。 安装Homebrew Homebrew的安装非常简单，打开终端，执行下列命令即可： ` $ /usr/bin/ruby -e “$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)” `]]></summary></entry></feed>
