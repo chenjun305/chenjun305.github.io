@@ -57,9 +57,17 @@ $ gem list
 
 ### Bundler
 * 项目依赖管理工具，通过Gemfile管理项目的依赖
-* Any modern distribution of Ruby comes with Bundler preinstalled by default.
-* 如果没有跟随ruby安装，通过gem install bundler安装。
 * https://bundler.io/
+* Any modern distribution of Ruby comes with Bundler preinstalled by default.
+* 通过gem install bundler安装或更新到最新版本。
+
+```
+bundle init
+bundle add rspec
+bundle install
+bundle exec rspec
+```
+
 * Gemfile长这个样子
 
 ```
