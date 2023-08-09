@@ -7,11 +7,11 @@ tags: ruby
 categories: programming
 ---
 ### jekyll简介
-* https://jekyllrb.com/
+* 官网：[https://jekyllrb.com/](https://jekyllrb.com/)
 * jekyll是一个静态网站生成器，用户不需要使用html/css/js，通过markdown就可以编写网站，jekyll会将其转化为静态网页。
 * GitHub pages官方支持的工具
 * 发展时间较长，社区有大量的theme可以直接免费使用。
-* jekyll是使用ruby开发的工具，其他语言的类似工具，比较有名的有golang开发的HUGO：https://gohugo.io/
+* jekyll是使用ruby开发的工具，其他语言的类似工具，比较有名的有golang开发的HUGO：[https://gohugo.io/](https://gohugo.io/)
 
 
 ### 如何使用

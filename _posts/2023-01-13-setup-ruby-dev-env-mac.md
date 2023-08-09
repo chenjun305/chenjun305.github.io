@@ -8,7 +8,7 @@ categories: programming
 ---
 ### 安装rbenv
 * rbenv是ruby的多版本管理工具，方便在同一台电脑上安装多个不同的ruby版本
-* https://github.com/rbenv/rbenv
+* 项目地址：[https://github.com/rbenv/rbenv](https://github.com/rbenv/rbenv)
 
 ```
 $ brew install rbenv ruby-build
@@ -20,7 +20,7 @@ eval "$(rbenv init - bash)"
 ```
 
 ### 安装ruby
-* https://www.ruby-lang.org/
+* 官网：[https://www.ruby-lang.org/](https://www.ruby-lang.org/)
 
 ```
 // list latest stable versions:
@@ -34,10 +34,10 @@ $ rbenv global 3.1.3
 
 $ rbenv versions
   system
-* 3.1.3 (set by /Users/yueqi/.rbenv/version)
+* 3.1.3 (set by ~/.rbenv/version)
 
 $ which ruby
-/Users/yueqi/.rbenv/shims/ruby
+~/.rbenv/shims/ruby
 
 // 设置单个项目使用的ruby版本，原理为通过将版本名写入当前项目目录下的.ruby-version文件实现
 $ rbenv local 3.1.3
@@ -45,7 +45,7 @@ $ rbenv local 3.1.3
 
 ### RubyGems
 * gem是ruby自带的第三方类库管理工具，从ruby 1.9版本开始，gem已经包含在ruby的安装包中。
-* 查找，安装及发布gem: https://rubygems.org/ 
+* 查找，安装及发布gem: [https://rubygems.org/](https://rubygems.org/) 
 
 ```
 // 安装rails
@@ -57,7 +57,7 @@ $ gem list
 
 ### Bundler
 * 项目依赖管理工具，通过Gemfile管理项目的依赖
-* https://bundler.io/
+* 官网：[https://bundler.io/](https://bundler.io/)
 * Any modern distribution of Ruby comes with Bundler preinstalled by default.
 * 通过gem install bundler安装或更新到最新版本。
 
