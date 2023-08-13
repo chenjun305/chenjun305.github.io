@@ -7,6 +7,14 @@ tags: microservices
 categories: programming
 ---
 ### Saga简介
+SAGA最初出现在1987年Hector Garcaa-Molrna & Kenneth Salem发表的论文[SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)里。其核心思想是将长事务拆分为多个短事务，由Saga事务协调器协调，如果每个短事务都成功提交完成，那么全局事务就正常完成，如果某个步骤失败，则根据相反顺序一次调用补偿操作。
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/sagas.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+
 Saga是一种在微服务架构中维护数据一致性的机制，它通过使用异步消息来协调一系列本地事务，从而维护多个服务之间的数据一致性。 Saga不依赖底层数据库事务的回滚机制，而是调用用户编写的补偿事务来回滚。  
 当本地事务完成时，服务会发布消息，从而触发Saga中的下一个步骤。  
 使用异步消息的好处除了确保Saga参与方之间松散耦合，还可以保证Saga完成，因为如果消息接收方暂时不可用，消息代理会缓存消息，直到最终投递。
