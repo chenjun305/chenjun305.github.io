@@ -238,7 +238,7 @@ jekyll-archives:
     tag: '/blog/tag/:name/'
     category: '/blog/category/:name/'
 
-display_tags: ['microservices', 'golang', 'java', 'python', 'k8s', 'docker', 'iOS'] # this tags will be dispalyed on the front page of your blog
+display_tags: ['architecture', 'microservices', 'golang', 'java', 'python', 'k8s', 'docker', 'ruby', 'mysql', 'iOS'] # this tags will be dispalyed on the front page of your blog
 
 # -----------------------------------------------------------------------------
 # Jekyll Link Attributes
