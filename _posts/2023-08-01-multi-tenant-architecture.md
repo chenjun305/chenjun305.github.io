@@ -10,6 +10,8 @@ categories: programming
 
 ### Salesforce简介
 #### Salesforce发展史
+Salesforce的创立者叫Marc Benioff。1999年时，他27岁，为当时美国一家软件巨头Oracle最年轻的高级副总裁。20世纪90年代中后期，像Oracle这样的企业售卖软件按Licence（对付费用户进行授权，以正常使用软件的完整功能）收费，并由软件厂商去部署安装。Marc任Oracle高级副总裁期间，形成了将CRM等通用软件通过互联网部署的想法：用云端模式交付，使用者则像“交水电费那样为自己的软件付费。但他的想法并没有得到前东家的认可，于是决定创业，1999年3月，Salesforce诞生。
+
 * 1999年，由前甲骨文高管Marc Benioff创立
 * 2001年，推出了第一款SaaS应用CRM，受到热议
 * 2004年，纽交所上市，市值10亿美元，股票代码CRM
@@ -206,9 +208,276 @@ Salesforce是SaaS和PaaS思想的首推者。
   * 关于数据的数据
   * 指的是对象，字段，页面布局，验证规则，工作流等这类定义应用本身的数据。
   * 也被称为UDD （Universal Data Dictionary）通用数据字典
-  
+
 #### 元数据驱动的实现原理
 理论上来说，我们只需要3张表就可以实现所有租户的所有需求。  
 不同租户通过唯一的OrgID隔离，所有数据访问操作都要带OrgID参数，value0~value500存储对象的不同属性。  
 
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/metadata1.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    元数据驱动的实现原理
+</div>
 
+#### Salesforce数据层
+* 元数据表（Metadata Tables）
+* 数据表（Data Tables）
+* 索引表（Specialized Pivot tables）
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-data-layer.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Salesforce数据层
+</div>
+
+##### Data表
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-data-table.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Data表
+</div>
+大多数结构化数据都以可变字符串形式存储在value0~500的列里。（包括数字，日期等），但无法利用底层数据库索引的能力快速查询和排序？怎么解决呢？ 
+
+##### indexes表
+解决方案是把数据拷贝出数据表并转换成原始的的数据类型，并存储到Indexes索引表列内，  
+Indexes 表的底层索引是标准的，采用非唯一性的数据库索引。  
+查询先查indexes表，再查data表获取数据。  
+indexes表的字段定义如下：
+* OrgID：其所归属的应用对象所归属的租户OrgID
+* ObjID：字段所属应用对象唯一标识
+* FieldNum：对象字段存储位置
+* ObjInstanceGUID：对象实例唯一标识
+* StringValue：强类型的字符串列
+* NumValue：强类型的数字列
+* DateValue：强类型的日期列
+
+##### Unique Indexes表
+这个表非常类似于 Indexes 表，不过 Unique indexes采用底层原生的数据库索引来强制唯一性校验。
+* UniqueStringValue：唯一的字符串列
+* UniqueNumValue：唯一的数字列
+* UniqueDateValue：唯一的日期列
+* 其他字段定义请参考 Indexes 透视表
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-indexes-table.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-unique-indexes-table.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    indexes表和unique indexes表
+</div>
+
+##### Relationship索引表
+* 字段
+  * OrgID:租户ID
+  * ObjID:子对象的对象标识
+  * GUID：子对象实例的唯一表识
+  * RelationID：子对象内关系字段定义的标识
+  * TargetObjInstanceID：父对象实例的唯一标识
+* 定义了两个底层数据库复合索引存储引用关系
+  * 第一个索引字段：OrgID + GUID，用于从子对象到父对象的关联查询。
+  * 第二个索引字段：OrgID + ObjID + RelationID + TargetObjInstanceID，用于父对象到子对象的关联查询。
+
+  ##### 如何支撑多租户巨大数据量？
+* Data Partitioning数据分区
+  * 所有的 Force.com 的数据，元数据，透视表结构，包含底层数据库索引，都是通过对 OrgID 进行物理分区的，采用的是原生的数据库分区机制。
+  * 数据分区是数据库系统提供的被验证过的技术，用以物理划分较大的逻辑数据结构到较小的可以管理的区块中。
+
+##### 无感的对象结构变更No DDL
+* 在元数据驱动的数据架构中，所有的 DDL 语言操作对应的使元数据层的元数据的记录的更新，不涉及数据库物理结构的更新
+* 当用户修改了一个表字段列的数据结构，从一种数据类型改成另外一种不同存储格式的数据类型时候，系统会重新分派一个新的弹性列给到这个字段列的数据，将数据从原来的存储弹性列批量拷贝到新的弹性列，然后才会更新此字段列的元数据，暨在 Fields 表中更新这个字段列的元数据，将数据类型更改为新的数据类型，并将 FieldNum 更新为新的 ValueX 列对应的X值。
+
+### 多租户隔离和保护
+* 监控每一个代码执行片段
+* 限制代码CPU执行时间，内存使用量
+* 限制代码DB查询和更新数量
+* 限制可执行的数学运算量
+* 限制外部接口调用量
+* 执行太耗时或太耗资源的操作，系统将抛出运行时异常
+* 单元测试覆盖率必须超过75%
+
+因为是多租户共享，严格的限制保证整体的可扩展性和性能   
+长期来看，这些限制推动了开发写出了更好的代码  
+
+### 数据高可用
+* 4 online copies
+* 2 standby copies
+* 本地热备切换速度更快
+* 异地热备使灾难切换少于15分钟
+* 每6个月切换一次（定期演练，验证）
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-data-availability.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    数据高可用
+</div>
+
+### 可视化配置
+#### Salesforce能配置什么？
+* 数据模型
+  * 包括自定义的对象和它的相关字段，及其之间的关系。 
+  * 其实就是操作元数据
+* 安全和共享模型
+  * 包括用户，权限等
+* 用户界面
+  * 包括界面布局, 数据输入表单和报表等。
+* 声明式逻辑 (工作流)
+* 编程式逻辑 (存储过程和触发器)
+
+#### Salesforce工作流
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce_flow.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Salesforce工作流
+</div>
+
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce_flow_builder.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Salesforce工作流构建器
+</div>
+
+#### 配置数据模型和用户界面
+* 对象管理器
+  * 其实就是创建数据模型的地方，是后台配置对象，字段，页面布局等元数据的工具
+* 配置用户界面
+  * 列表视图 - 列表页
+    * 在前端加载对象的记录列表时使用。例如客户列表
+    * 利用元数据来展示业务数据。
+  * 页面布局 - (创建/更新/详情页）
+    * 在前端加载一条记录详情的时候使用，
+    * 例如客户详情，新增/编辑客户信息页面。
+
+##### 可视化配置底层数据结构
+橙色表示后台配置，蓝色表示前台界面  
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-data-structure.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    可视化配置底层数据结构
+</div>
+
+##### 对象管理器
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-object-manager.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+   对象管理器 
+</div>
+
+##### 对象（Object)
+* 只有名称和APIName这两个重要的属性。
+* 创建一个新对象的时候，系统会自动帮你创建一些系统字段、一个页面布局，以及系统标准按钮数据。
+* 系统字段主要是指那些审计字段，例如：创建人、创建时间、最后更新人、最后更新时间、是否已删除等等。标准按钮主要是创建、编辑、删除等系统常规操作按钮。
+
+##### 字段（Field）
+* 每个字段都需要有个数据类型
+* 一个字段只能属于1个对象
+* 字段的APIName在该对象上必须唯一
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-object-field-type.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+    </div>
+</div>
+<div class="caption">
+    字段的数据类型
+</div>
+
+##### 列表视图
+可灵活控制列表需要展示的字段和顺序。
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-list-view.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    列表视图
+</div>
+
+##### 页面布局(PageLayout)
+* 在前端加载一条记录详情的时候使用
+* 页面布局只要有2大块
+  * 区域（PageLayoutSection）
+  * 相关列表（RelatedList）
+* 每个区域会有不同字段，可以是一列，两列，三列式
+* 相关列表指的是展示子记录的列表，可配置展示子记录的哪些列
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-page-layout.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    页面布局配置页面
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-page-related-list.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    相关列表配置页面
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-detail-page.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    加载详情页面
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/salesforce-edit-page.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    加载新建和编辑页面
+</div>
+
+### 总结Salesforce的设计理念
+* 数据驱动
+  * 元数据驱动
+* 规模经济
+  * 尽可能多用户共享同一套系统
+* 定制方便
+* 功能丰富
+  * 能让用户购买和整合第三方应用（AppExchange）
+* 软件是一个进化的工程
+  * 不断丰富的产品矩阵
