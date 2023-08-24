@@ -45,9 +45,12 @@ $ gvm use go1.20.7
 ```
 
 ### VS Code配置
-VS Code默认是去找安装在/usr/local/bin下的golang, 需要配置VS Code去找GVM安装的golang.  
-通过配置settings.json可以实现。  
-mac下该文件位于 $HOME/Library/Application Support/Code/User/settings.json  
+VS Code默认是去找安装在`/usr/local/bin`下的golang, 需要配置VS Code去找GVM安装的golang.  
+而官方的go插件安装不同版本的go路径是在`$HOME/sdk/`下。  
+使得vs code无法自动感知到gvm已经安装和设置的golang版本。 
+
+要使vscode能使用gvm所管理的golang, 需要通过配置settings.json实现。  
+mac下该文件位于 `$HOME/Library/Application Support/Code/User/settings.json`  
 
 打开VS Code后，按快捷键 Command + P 然后输入 > Open User Settings(JSON),  
 然后增加如下配置：  
@@ -55,3 +58,5 @@ mac下该文件位于 $HOME/Library/Application Support/Code/User/settings.json
 "go.goroot": "/Users/yueqi/.gvm/gos/go1.20.7",
 "go.gopath": "/Users/yueqi/.gvm/pkgsets/go1.20.7/global",
 ```
+
+
