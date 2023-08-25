@@ -3,7 +3,7 @@ layout: post
 title: VS Code 中的 .vscode 文件夹
 date: 2023-02-10
 description: 
-tags: architecture
+tags: dev-tools
 categories: programming
 ---
 `.vscode` 是 VS Code 在项目目录下会特别查找的一个隐藏文件夹。它允许你为某个具体项目自定义 VS Code 设置,而不需要设置全局的用户配置或工作区配置。
