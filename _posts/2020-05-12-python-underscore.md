@@ -1,7 +1,7 @@
 ---
 layout: post
 title: python underscore
-date: 2023-01-12
+date: 2020-05-12
 description: 
 tags: python
 categories: programming
