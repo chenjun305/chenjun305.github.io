@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 如何提高代码可读性
-date: 2023-07-01 17:00:00
+date: 2023-07-01
 description: 
 tags: architecture
 categories: programming

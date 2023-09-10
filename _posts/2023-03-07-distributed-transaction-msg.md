@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 分布式事务 - 消息机制
-date: 2023-03-07 17:00:00
+date: 2023-03-07
 description: 
 tags: microservices
 categories: programming

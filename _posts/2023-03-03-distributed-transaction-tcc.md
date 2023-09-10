@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 分布式事务 - TCC
-date: 2023-03-03 17:00:00
+date: 2023-03-03
 description: 
 tags: microservices
 categories: programming

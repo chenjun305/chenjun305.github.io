@@ -1,7 +1,7 @@
 ---
 layout: post
 title: docker使用
-date: 2023-04-05 17:00:00
+date: 2023-04-05
 description: 
 tags: docker
 categories: programming

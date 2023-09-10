@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Salesforce元数据驱动的多租户架构
-date: 2023-08-01 17:00:00
+date: 2023-08-01
 description: 
 tags: architecture
 categories: programming
