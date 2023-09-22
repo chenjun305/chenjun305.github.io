@@ -4,4 +4,4 @@ date: 2023-08-15 00:00:00
 inline: true
 ---
 
-I am looking for a new job now, contact me if you have any recommendation for me :sparkles: :smile:
+I post new blogs about [微服务下的分布式事务](/blog/tag/microservices/)

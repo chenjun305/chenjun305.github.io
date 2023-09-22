@@ -3,7 +3,7 @@ layout: post
 title: linux threads
 date: 2023-03-10
 description: 
-tags: k8s
+tags: Linux
 categories: programming
 ---
 ### 背景：什么是SMP？
