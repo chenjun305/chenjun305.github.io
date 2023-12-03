@@ -243,3 +243,64 @@ Redis的主要业务逻辑就是在本机内存上的数据结构的读写，单
 没有差别，都是走虚拟的环回设备lo， 这是因为内核在设置IP的时候，把所有的本机IP都初始化到local路由表里了。
 
 
+## 深度理解TCP连接建立过程
+1. 服务端listen
+  * 申请并初始化接收队列，包括半连接队列和全连接队列
+  * 全连接队列是1个链表，其最大长度min(listen时传入的backlog, net.core.somaxconn)
+  * 半连接队列由于需要快速地查找，使用的是一个哈希表, 其最大长度是min(backlog, somaxconn, tcp_max_syn_backlog) + 1再向上取整到2的N次幂，但最小不能小于16
+2. 客户端connect
+  * 随机地从ip_local_port_range选择一个位置开始循环判断，选择可用的本地端口, 如果端口快用光了，内核大概率要循环多轮才能找到可用端口，这会导致connect系统调用的CPU开销上涨。如果端口查找失败，会报错“Cannot assign requested address”
+  * 发出SYN握手请求
+  * 启动重传定时器
+3. 服务端收到SYN握手请求
+  * 发出SYC ACK
+  * 进入半连接队列
+  * 启动定时器
+4. 客户端收到SYN ACK
+  * 消除重传定时器
+  * 设置为已连接
+  * 发送ACK确认
+5. 服务端收到ACK
+  * 创建新sock 
+  * 从半连接队列删除
+  * 加入全连接队列
+6. 服务端accept
+  * 从全连接队列取走socket
+
+### 握手异常总结
+* 如果端口不充足，处理方法有那么几个
+  * 通过调整ip_local_port_range来尽量加大端口范围。
+  * 尽量复用连接，使用长连接来削减频繁的握手处理
+  * 有用但不太推荐的方法是开启tcp_tw_reuse和tcp_tw_recycle
+
+* 半连接队列满，全连接队列满等导致丢包，应如何应对
+  * 打开tcp_syncookies来防止过多请求打满半连接队列，包括SYN Flood攻击，来解决服务端因为半连接队列满而发生的丢包
+  * 加大连接队列长度，可通过`ss -nlt`命令中输出的Send-Q来最终生效长度
+  * 尽快调用accept, 应用程序应该尽快在握手成功后通过accept把新连接取走。
+  * 尽早拒绝，例如将Redis，MySQL等服务器的内核参数tcp_abort_on_overflow设置为1，这是客户端会收到错误“connection reset by peer”
+  * 用长连接代替短连接，减少过于频繁的三次握手
+
+## 一条TCP连接消耗多大内存？
+* 内核是如何管理内存的
+  1. 把所有内存条和CPU进行分组，组成node
+  2. 把每一个node划分成多个zone
+  3. 每个zone下都用伙伴系统来管理空闲页面
+  4. 提供slab分配器来管理各种内核对象， 每个slab缓存都是用来存储固定大小，甚至特定的一种内核对象。这样当一个对象释放后，另一个同类对象可以直接使用这块内存，几乎没有任何碎片，极大地提高了分配效率。
+
+* 如何查看内核使用的内存信息
+  * `sudo cat /proc/slabinfo` 可以看到所有的kmem cache
+  * `sudo slabtop` 从大往小按照占用内存进行排列
+
+* 服务器上一条ESTABLISH状态的空连接需要消耗多少内存？总共3.3KB左右
+  * struct socket_alloc, 大小约为0.62KB， slab缓存名是sock_inode_cache
+  * struct tcp_sock, 大小约为1.94KB， slab缓存名是tcp
+  * struct dentry, 大小约为0.19KB, slab缓存名是dentry
+  * struct file, 大小约为0.25KB, slab缓存名是flip
+
+* 服务器上出现大量的TIME_WAIT, 内存开销会不会很大？
+  * 一条TIME_WAIT状态的连接金占用0.4KB左右内存
+  * 端口占用问题，可以考虑使用`tcp_max_tw_buckets`来限制TIME_WAIT连接总数，或者打开tcp_tw_recycle, tcp_tw_reuse来快速回收端口。
+  * 使用长连接代替频繁的短连接
+
+
+
