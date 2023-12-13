@@ -28,7 +28,7 @@ category: work
 
 ### 业务支撑层
 * account 账户服务，管理市场推广，销售人员用户，权限，组织架构等
-* notification 通知jj
+* notification 通知
 * File 文件服务
 * POI 地理位置服务
 * performance 绩效系统
